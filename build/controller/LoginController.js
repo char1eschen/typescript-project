@@ -9,15 +9,20 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.LoginController = void 0;
 require("reflect-metadata");
-var decorator_1 = require("./decorator");
+var decorator_1 = require("../decorator");
 var util_1 = require("../utils/util");
 var LoginController = /** @class */ (function () {
     function LoginController() {
     }
+    LoginController_1 = LoginController;
+    LoginController.isLogin = function (req) {
+        return !!(req.session ? req.session.login : false);
+    };
     LoginController.prototype.login = function (req, res) {
         var password = req.body.password;
-        var isLogin = req.session ? req.session.login : false;
+        var isLogin = LoginController_1.isLogin(req);
         if (isLogin) {
             res.json(util_1.getResponseData(false, "already login"));
         }
@@ -38,7 +43,7 @@ var LoginController = /** @class */ (function () {
         res.json(util_1.getResponseData(true));
     };
     LoginController.prototype.home = function (req, res) {
-        var isLogin = req.session ? req.session.login : false;
+        var isLogin = LoginController_1.isLogin(req);
         if (isLogin) {
             res.send("\n        <html>\n          <body>\n            <a href='/getData'>get data</a>\n            <a href='/showData'>show data</a>\n            <a href='/logout'>logout</a>\n          </body>\n        </html>\n      ");
         }
@@ -46,6 +51,7 @@ var LoginController = /** @class */ (function () {
             res.send("\n        <html>\n          <body>\n            <form method=\"post\" action=\"/login\">\n              <input type=\"password\" name=\"password\">\n              <button>login</button>\n            </form>\n          </body>\n        </html>\n      ");
         }
     };
+    var LoginController_1;
     __decorate([
         decorator_1.post("/login"),
         __metadata("design:type", Function),
@@ -64,8 +70,9 @@ var LoginController = /** @class */ (function () {
         __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", void 0)
     ], LoginController.prototype, "home", null);
-    LoginController = __decorate([
-        decorator_1.controller
+    LoginController = LoginController_1 = __decorate([
+        decorator_1.controller("/")
     ], LoginController);
     return LoginController;
 }());
+exports.LoginController = LoginController;
