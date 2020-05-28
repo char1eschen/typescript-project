@@ -20,20 +20,21 @@ var ProductAnalyzer = /** @class */ (function () {
         var pruductInfos = [];
         productItems.map(function (index, element) {
             var title = $(element).find(".card-title");
-            var title1 = $(title).find(".card-title-1").text();
             var title2 = $(title).find(".card-title-2").text();
             var title3 = $(title).find(".card-title-3").text();
-            var itemTitle = title1 + " " + title2 + " " + title3;
+            var itemTitle = title2 + " " + title3;
             var body = $(element).find(".card-body");
-            var itemPrice = Number($(body).find(".price").text().replace("$", ""));
+            var tempPrice = (Number($(body).find(".price--withTax").text().replace("$", "")) * Math.random()).toFixed(2);
+            var itemPrice = Number(tempPrice);
             pruductInfos.push({
                 itemTitle: itemTitle,
                 itemPrice: itemPrice,
             });
         });
+        console.log(pruductInfos);
         return {
             time: new Date().getTime(),
-            data: pruductInfos,
+            data: pruductInfos.slice(0, 3),
         };
     };
     ProductAnalyzer.prototype.generateJsonContent = function (productInfo, filePath) {

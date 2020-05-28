@@ -32,20 +32,21 @@ export default class ProductAnalyzer implements Analyzer {
     const pruductInfos: Pruduct[] = [];
     productItems.map((index, element) => {
       const title = $(element).find(".card-title");
-      const title1 = $(title).find(".card-title-1").text();
-      const title2 = $(title).find(".card-title-2").text();
+\      const title2 = $(title).find(".card-title-2").text();
       const title3 = $(title).find(".card-title-3").text();
-      const itemTitle = `${title1} ${title2} ${title3}`;
+      const itemTitle = `${title2} ${title3}`;
       const body = $(element).find(".card-body");
-      const itemPrice = Number($(body).find(".price").text().replace("$", ""));
+      const tempPrice = (Number($(body).find(".price--withTax").text().replace("$", "")) * Math.random()).toFixed(2);
+      const itemPrice = Number(tempPrice);
       pruductInfos.push({
         itemTitle,
         itemPrice,
       });
     });
+    console.log(pruductInfos)
     return {
       time: new Date().getTime(),
-      data: pruductInfos,
+      data: pruductInfos.slice(0,3),
     };
   }
 

@@ -18,7 +18,7 @@ export function controller(root: string) {
         key
       );
       if (path && method) {
-        const fullpath = root === "/" ? path : `&{root}&{path}`;
+        const fullpath = root === "/" ? path : `${root}${path}`;
         if (middlewears && middlewears.length) {
           router[method](fullpath, ...middlewears, handler);
         } else {

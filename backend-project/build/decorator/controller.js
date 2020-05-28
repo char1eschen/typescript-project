@@ -20,7 +20,7 @@ function controller(root) {
             var handler = target.prototype[key];
             var middlewears = Reflect.getMetadata("middlewears", target.prototype, key);
             if (path && method) {
-                var fullpath = root === "/" ? path : "&{root}&{path}";
+                var fullpath = root === "/" ? path : "" + root + path;
                 if (middlewears && middlewears.length) {
                     router_1.default[method].apply(router_1.default, __spreadArrays([fullpath], middlewears, [handler]));
                 }

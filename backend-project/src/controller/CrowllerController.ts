@@ -24,7 +24,7 @@ const checkLogin = (
   }
 };
 
-@controller("/")
+@controller("/api")
 export class CrowllerController {
   @get("/getData")
   @use(checkLogin)
@@ -32,7 +32,7 @@ export class CrowllerController {
     const url = "https://lovetodream.com.au/stage-1-swaddling/";
     const anaylzer = Analyzer.getInstance();
     new Crowller(url, anaylzer);
-    res.json(getResponseData(true));
+    res.json(getResponseData<responseResult.getData>(true));
   }
 
   @get("/showData")
@@ -41,9 +41,9 @@ export class CrowllerController {
     try {
       const position = path.resolve(__dirname, "../../data/product.json");
       const result = fs.readFileSync(position, "utf-8");
-      res.json(getResponseData(JSON.parse(result)));
+      res.json(getResponseData<responseResult.showData>(JSON.parse(result)));
     } catch (e) {
-      res.json(getResponseData(false, "no data"));
+      res.json(getResponseData<responseResult.showData>(false, "no data"));
     }
   }
 }

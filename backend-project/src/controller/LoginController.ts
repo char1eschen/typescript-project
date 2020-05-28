@@ -13,25 +13,26 @@ export class LoginController {
     return !!(req.session ? req.session.login : false);
   }
 
-  @get("/api/isLogin")
+  @get("/isLogin")
   isLogin(req: BodyRequest, res: Response): void {
     const isLogin = LoginController.isLogin(req);
-    res.json(getResponseData(isLogin));
+    const result = getResponseData<responseResult.isLogin>(isLogin);
+    res.json(result);
   }
 
-  @post("/api/login")
+  @post("/login")
   login(req: BodyRequest, res: Response): void {
     const { password } = req.body;
     const isLogin = LoginController.isLogin(req);
 
     if (isLogin) {
-      res.json(getResponseData(false, "already login"));
+      res.json(getResponseData<responseResult.login>(false, "already login"));
     } else {
       if (password === "123" && req.session) {
         req.session.login = true;
-        res.json(getResponseData(true));
+        res.json(getResponseData<responseResult.login>(true));
       } else {
-        res.json(getResponseData(false, "login falied"));
+        res.json(getResponseData<responseResult.login>(false, "login falied"));
       }
     }
   }
@@ -41,6 +42,6 @@ export class LoginController {
     if (req.session) {
       req.session.login = undefined;
     }
-    res.json(getResponseData(true));
+    res.json(getResponseData<responseResult.logout>(true));
   }
 }
