@@ -17,7 +17,6 @@ const checkLogin = (
   next: NextFunction
 ): void => {
   const isLogin = !!(req.session ? req.session.login : false);
-  console.log("checkin middleware");
   if (isLogin) {
     next();
   } else {
@@ -25,16 +24,10 @@ const checkLogin = (
   }
 };
 
-const test = (req: BodyRequest, res: Response, next: NextFunction): void => {
-  console.log("test middleware");
-  next();
-};
-
 @controller("/")
 export class CrowllerController {
   @get("/getData")
   @use(checkLogin)
-  @use(test)
   getData(req: BodyRequest, res: Response): void {
     const url = "https://lovetodream.com.au/stage-1-swaddling/";
     const anaylzer = Analyzer.getInstance();

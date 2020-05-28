@@ -7,13 +7,19 @@ interface BodyRequest extends Request {
   body: { [key: string]: string | undefined };
 }
 
-@controller("/")
+@controller("/api")
 export class LoginController {
   static isLogin(req: BodyRequest): boolean {
     return !!(req.session ? req.session.login : false);
   }
 
-  @post("/login")
+  @get("/api/isLogin")
+  isLogin(req: BodyRequest, res: Response): void {
+    const isLogin = LoginController.isLogin(req);
+    res.json(getResponseData(isLogin));
+  }
+
+  @post("/api/login")
   login(req: BodyRequest, res: Response): void {
     const { password } = req.body;
     const isLogin = LoginController.isLogin(req);
@@ -36,33 +42,5 @@ export class LoginController {
       req.session.login = undefined;
     }
     res.json(getResponseData(true));
-  }
-
-  @get("/")
-  home(req: BodyRequest, res: Response): void {
-    const isLogin = LoginController.isLogin(req);
-
-    if (isLogin) {
-      res.send(`
-        <html>
-          <body>
-            <a href='/getData'>get data</a>
-            <a href='/showData'>show data</a>
-            <a href='/logout'>logout</a>
-          </body>
-        </html>
-      `);
-    } else {
-      res.send(`
-        <html>
-          <body>
-            <form method="post" action="/login">
-              <input type="password" name="password">
-              <button>login</button>
-            </form>
-          </body>
-        </html>
-      `);
-    }
   }
 }

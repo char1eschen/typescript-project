@@ -22,17 +22,12 @@ var decorator_1 = require("../decorator");
 var util_1 = require("../utils/util");
 var checkLogin = function (req, res, next) {
     var isLogin = !!(req.session ? req.session.login : false);
-    console.log("checkin middleware");
     if (isLogin) {
         next();
     }
     else {
         res.json(util_1.getResponseData(null, "please login"));
     }
-};
-var test = function (req, res, next) {
-    console.log("test middleware");
-    next();
 };
 var CrowllerController = /** @class */ (function () {
     function CrowllerController() {
@@ -56,7 +51,6 @@ var CrowllerController = /** @class */ (function () {
     __decorate([
         decorator_1.get("/getData"),
         decorator_1.use(checkLogin),
-        decorator_1.use(test),
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", void 0)
