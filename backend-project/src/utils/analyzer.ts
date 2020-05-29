@@ -46,7 +46,6 @@ export default class ProductAnalyzer implements Analyzer {
         itemPrice,
       });
     });
-    console.log(pruductInfos);
     return {
       time: new Date().getTime(),
       data: pruductInfos.slice(0, 3),

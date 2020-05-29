@@ -32,7 +32,6 @@ var ProductAnalyzer = /** @class */ (function () {
                 itemPrice: itemPrice,
             });
         });
-        console.log(pruductInfos);
         return {
             time: new Date().getTime(),
             data: pruductInfos.slice(0, 3),
