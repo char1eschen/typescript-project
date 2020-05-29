@@ -24,7 +24,8 @@ var ProductAnalyzer = /** @class */ (function () {
             var title3 = $(title).find(".card-title-3").text();
             var itemTitle = title2 + " " + title3;
             var body = $(element).find(".card-body");
-            var tempPrice = (Number($(body).find(".price--withTax").text().replace("$", "")) * Math.random()).toFixed(2);
+            var tempPrice = (Number($(body).find(".price--withTax").text().replace("$", "")) *
+                Math.random()).toFixed(2);
             var itemPrice = Number(tempPrice);
             pruductInfos.push({
                 itemTitle: itemTitle,
