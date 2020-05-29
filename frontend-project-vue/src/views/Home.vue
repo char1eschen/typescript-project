@@ -1,53 +1,99 @@
 <template>
-  <div class="home-page">
+  <div class="home-page" v-if="state.loaded">
     <div class="buttons">
       <el-button type="primary" @click="handleCrowllerClick">Get</el-button>
       <el-button type="primary" @click="handleLogoutClick">Log out</el-button>
     </div>
-    <div id="lineChart" style="height:300px;"></div>
+    <div id="lineChart" style="height:300px"></div>
   </div>
 </template>
 
 <script lang="ts">
 import { Vue, Component } from "vue-property-decorator";
 import request from "../request";
+import echarts from "echarts";
+import moment from "moment";
 
 interface State {
   loaded: boolean;
-  isLogin: boolean;
+  // isLogin: boolean;
   data: responseResult.DataStructure;
 }
 
 @Component
-export default class extends Vue {
+export default class Home extends Vue {
   private state: State = {
     loaded: false,
-    isLogin: true,
+    // isLogin: true,
     data: {},
   };
 
-  private renderChart() {
-    let myChart = this.$echarts.init(document.getElementById("lineChart"));
-    let option = {
+  private getOption(): echarts.EChartOption {
+    const { data } = this.state;
+    const productNames: string[] = [];
+    const times: string[] = [];
+    const tempData: {
+      [key: string]: number[];
+    } = {};
+    for (const i in data) {
+      const item = data[i];
+      times.push(moment(Number(i)).format("MM-DD HH:mm"));
+      item.forEach((innerItem) => {
+        const { itemTitle, itemPrice } = innerItem;
+        if (productNames.indexOf(itemTitle) === -1) {
+          productNames.push(itemTitle);
+        }
+        tempData[itemTitle]
+          ? tempData[itemTitle].push(itemPrice)
+          : (tempData[itemTitle] = [itemPrice]);
+      });
+    }
+    const result: echarts.EChartOption.Series[] = [];
+    for (const i in tempData) {
+      result.push({
+        name: i,
+        type: "line",
+        data: tempData[i],
+      });
+    }
+    return {
       title: {
-        text: "ECharts 入门示例",
+        text: "price",
       },
-      tooltip: {},
+      tooltip: {
+        trigger: "axis",
+      },
       legend: {
-        data: ["销量"],
+        data: productNames,
+      },
+      grid: {
+        left: "3%",
+        right: "4%",
+        bottom: "3%",
+        containLabel: true,
+      },
+      toolbox: {
+        feature: {
+          saveAsImage: {},
+        },
       },
       xAxis: {
-        data: ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"],
+        type: "category",
+        boundaryGap: false,
+        data: times,
       },
-      yAxis: {},
-      series: [
-        {
-          name: "销量",
-          type: "bar",
-          data: [5, 20, 36, 10, 10, 20],
-        },
-      ],
+      yAxis: {
+        type: "value",
+      },
+      series: result,
     };
+  }
+
+  private renderChart() {
+    const option = this.getOption();
+    const myChart = echarts.init(
+      document.getElementById("lineChart") as HTMLDivElement
+    );
     myChart.setOption(option);
   }
 
@@ -55,7 +101,8 @@ export default class extends Vue {
     request.get("/api/logout").then((res) => {
       const data: responseResult.logout = res.data;
       if (data) {
-        this.state.isLogin = false;
+        // this.state.isLogin = false;
+        this.$router.push("login");
       } else {
         this.$message.error("log out failed");
       }
@@ -76,24 +123,28 @@ export default class extends Vue {
     });
   }
 
-  mounted() {
-    request.get("/api/isLogin").then((res) => {
-      this.state.loaded = true;
+  async mounted() {
+    await request.get("/api/isLogin").then((res) => {
       const data: responseResult.isLogin = res.data;
       if (!data) {
-        this.state.isLogin = false;
-        // this.$router.push('login')
+        // this.state.isLogin = false;
+        this.$router.push("login");
+      } else {
+        this.state.loaded = true;
+
+        request
+          .get("/api/showData")
+          .then((res) => {
+            const data: responseResult.DataStructure = res.data;
+            if (data) {
+              this.state.data = data;
+            }
+          })
+          .then(() => {
+            this.renderChart();
+          });
       }
     });
-
-    request.get("/api/showData").then((res) => {
-      const data: responseResult.DataStructure = res.data;
-      if (data) {
-        this.state.data = data;
-      }
-    });
-
-    console.log(this.state.isLogin, this.state.data);
   }
 }
 </script>
